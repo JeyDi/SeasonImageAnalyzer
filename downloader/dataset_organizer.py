@@ -1,7 +1,12 @@
 import os
 import random
 import shutil
+import numpy as np
+import cv2
 from pathlib import Path
+from tqdm import tqdm
+from random import shuffle
+from keras.preprocessing import image
 
 
 main_keywords = ['summer','winter','autumn','spring']
@@ -25,10 +30,10 @@ def clean_images(main_keywords,main_dir_path,split=0.7):
 
     for i, item in enumerate(main_keywords):
 
-        dir_path = os.path.join(main_dir_path,item)
+        dir_path = os.path.join(main_dir_path,"download",item)
         filenames = os.listdir(dir_path)
         print("\ndir_path: " + str(dir_path))
-
+        print("Number of files in the folder: ",len(filenames))
         if filenames : 
 
             for i, picture in enumerate(filenames):
@@ -41,7 +46,7 @@ def clean_images(main_keywords,main_dir_path,split=0.7):
                     new_file_name = str(item) + "_" + filename_without_ext
                     new_file_name_with_ext = new_file_name + extension
 
-                    print(new_file_name_with_ext)
+                    #print(new_file_name_with_ext)
                     os.rename(os.path.join(dir_path,picture), os.path.join(dir_path,new_file_name_with_ext))
                 else:
                     continue
@@ -51,20 +56,20 @@ def clean_images(main_keywords,main_dir_path,split=0.7):
 
             #Split the file to create the trainingset and the test set
             number_to_split = round(len(filenames) * (split*100) / 100)
-            print(number_to_split)
-            trainingset = range(0, len(main_keywords), number_to_split)
+            print("Number to split in ", item, " : ", number_to_split)
+            #trainingset = range(0, len(main_keywords)-1, number_to_split)
 
             #Per ogni elemento di number_to_split
             #Genero un numero random da 0 a len(main_keywords)
             #Prendo l'elemento con quell'indice e lo sposto nella cartella di training
             
             #List of all files in the directory
-            for i in range(0, number_to_split):
+            for i in range(0, number_to_split-1):
 
                 filenames = os.listdir(dir_path)
-                element = random.randint(0, len(filenames))
+                element = random.randint(0, len(filenames)-1)
                 element_to_move = filenames[element]
-                training_file = os.path.join(training_path,element_to_move)
+                training_file = os.path.join(training_path,item,element_to_move)
 
                 if os.path.isfile(training_file):
                     print("File: " + str(training_file) + " already exist in the training set..")
@@ -74,11 +79,12 @@ def clean_images(main_keywords,main_dir_path,split=0.7):
 
             #Reload list of files remaining in the dataset subfolder
             remaining_filenames = os.listdir(dir_path)
+            print("remaining files for testset: ", len(remaining_filenames))
 
             #Move this remaining file to the test set
             for f in remaining_filenames:
 
-                test_file = os.path.join(test_path,f)
+                test_file = os.path.join(test_path,item,f)
 
                 if os.path.isfile(test_file):
                     print("File: " + str(test_file) + " already exist in the test set..")
@@ -86,21 +92,80 @@ def clean_images(main_keywords,main_dir_path,split=0.7):
                 else:
                     shutil.move(os.path.join(dir_path,f), test_file)
 
+            print("Folder: ", item, " splitted")
         else:
             print("Folder is empty..")
 
     return(True)
 
+#Alexa Davalos
 
 ## 2 funzione:
 ###RICALCOLO GLI INDICI PER TRAININGSET E TESTSET
+def calculate_indexes(start_path,datasetname = "trainingset"):
     
+    dir_path = os.path.join(start_path,datasetname)
+    print("Calculate new indexes in: ", dir_path)
+    filenames = os.listdir(dir_path)
+
+    for i, item in enumerate(filenames):
+        
+        class_name = item.split('_')[0]
+        extension = item.split('.')[1]
+        new_name =  class_name + "_" + str(i) + "." + extension
+
+        old_image = os.path.join(dir_path,item)
+        new_image = os.path.join(dir_path,new_name)
+        os.rename(old_image, new_image)
+    
+    print("Completed...")
+    return True
+        
 
 ## 3 funzione:
 #genera un numpy array caricando le immagini in rgb
 #salva il numpy array per gli esperimenti
 
+#Create a label for an image
+def create_label(keywords,image):
 
+    for i, key in enumerate(keywords):
+        
+        label = image.split('_')[0]
+        
+        if key.lower() == label.lower():
+            ohl = np.array([i])
+    
+    return(ohl)
+
+#Create the dataset
+def create_dataset(keywords,start_path,dataset_type="trainingset"):
+
+    dataset = []
+
+    dir_path = os.path.join(start_path, dataset_type)
+
+    for i in tqdm(os.listdir(dir_path)):
+        
+        image_path = os.path.join(dir_path,i)
+        
+        #print("ImagePath: ",image_path)
+
+        # Load image in color
+        img = image.load_img(image_path)
+        
+        #Append the new image and label
+        dataset.append([np.array(img),create_label(keywords,i)])
+
+    dataset = np.array(dataset)
+    #Save the numpy array to disk
+    outfile = str(os.path.join(start_path,dataset_type)) + ".npy"
+    np.save(outfile, dataset)
+    print("Numpy array saved")
+    return dataset
+
+
+        
 
 
 
