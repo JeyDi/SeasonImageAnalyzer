@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from google_downloader import image_downloader
 from dataset_organizer import clean_images, create_label, create_dataset, calculate_indexes
+from image_processing import processImage, processImage_folder
 
 #Global variable for a specific task
 KEYWORDS = ['summer','winter','autumn','spring']
@@ -19,6 +20,9 @@ print("\n\t--- DOWNLOAD IMAGES ---")
 print("\n\t--- CLEAN IMAGES ---\n")
 clean_images(KEYWORDS,DATASET_PATH,0.7)
 
+print('\nProcess image folder')
+#path_to_remove = os.path.join(DATASET_PATH,'trainingset','summer')
+#processImage_folder(path_to_remove)
 
 #Calculate New Index
 print("\n\t--- CALCULATE NEW INDEX ---\n")

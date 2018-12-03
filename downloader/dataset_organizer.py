@@ -7,6 +7,7 @@ from pathlib import Path
 from tqdm import tqdm
 from random import shuffle
 from keras.preprocessing import image
+from image_processing import processImage
 
 
 main_keywords = ['summer','winter','autumn','spring']
@@ -81,7 +82,9 @@ def clean_images(main_keywords,main_dir_path,split=0.7):
                     print("File: " + str(training_file) + " already exist in the training set..")
                     continue
                 else:
-                    shutil.move(os.path.join(dir_path,element_to_move), training_file)
+                    #Preprocess image and move
+                    element_to_move_processed = processImage(os.path.join(dir_path,element_to_move))
+                    shutil.move(element_to_move_processed, training_file)
 
             #Reload list of files remaining in the dataset subfolder
             remaining_filenames = os.listdir(dir_path)
@@ -101,7 +104,9 @@ def clean_images(main_keywords,main_dir_path,split=0.7):
                     print("File: " + str(test_file) + " already exist in the test set..")
                     continue
                 else:
-                    shutil.move(os.path.join(dir_path,f), test_file)
+                    #Preprocess image and move
+                    element_to_move_processed = processImage(os.path.join(dir_path,f))
+                    shutil.move(element_to_move_processed, test_file)
 
             print("Folder: ", item, " splitted")
         else:
