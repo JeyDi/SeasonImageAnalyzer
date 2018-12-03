@@ -1,16 +1,16 @@
-from PIL import Image
+from PIL import Image, ImageFile
 from glob import glob
 import PIL
 import sys
 import os
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 
 def image_save(path,image,type='jpg'):
 
     name = path.split('.')
     result_name = name[0] + '.' + type
-    print(result_name)
-
+    
     if os.path.exists(path):
         os.remove(path)
     else:
@@ -49,7 +49,8 @@ def compress_image(path_originals,path,image, infile):
 def processImage(img_path,convert_type='jpg'):
    
     img = Image.open(img_path)
-    print(img)
+    print("Image Path: ",img_path)
+    print("Image Detail: ",img)
 
     if img.format == "JPEG":
         image = img.convert('RGB')
