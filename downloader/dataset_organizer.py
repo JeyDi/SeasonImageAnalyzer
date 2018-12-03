@@ -69,8 +69,14 @@ def clean_images(main_keywords,main_dir_path,split=0.7):
                 filenames = os.listdir(dir_path)
                 element = random.randint(0, len(filenames)-1)
                 element_to_move = filenames[element]
+
+                training_item_folder = os.path.join(training_path,item)
                 training_file = os.path.join(training_path,item,element_to_move)
 
+                #If the subfolder doesn't exist, create
+                if not os.path.exists(training_item_folder):
+                    os.makedirs(training_item_folder)
+                
                 if os.path.isfile(training_file):
                     print("File: " + str(training_file) + " already exist in the training set..")
                     continue
@@ -83,8 +89,13 @@ def clean_images(main_keywords,main_dir_path,split=0.7):
 
             #Move this remaining file to the test set
             for f in remaining_filenames:
-
+                
+                test_item_folder = os.path.join(test_path,item)
                 test_file = os.path.join(test_path,item,f)
+
+                #If the subfolder doesn't exist, create
+                if not os.path.exists(test_item_folder):
+                    os.makedirs(test_item_folder)
 
                 if os.path.isfile(test_file):
                     print("File: " + str(test_file) + " already exist in the test set..")
