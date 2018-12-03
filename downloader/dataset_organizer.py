@@ -84,7 +84,8 @@ def clean_images(main_keywords,main_dir_path,split=0.7):
                 else:
                     #Preprocess image and move
                     element_to_move_processed = processImage(os.path.join(dir_path,element_to_move))
-                    shutil.move(element_to_move_processed, training_file)
+                    if element_to_move_processed is not None:
+                        shutil.move(element_to_move_processed, training_file)
 
             #Reload list of files remaining in the dataset subfolder
             remaining_filenames = os.listdir(dir_path)

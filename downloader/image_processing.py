@@ -55,15 +55,16 @@ def processImage(img_path,convert_type='jpg'):
         image = img.convert('RGB')
         result_name = image_save(img_path,image,convert_type.lower())
         img.close()
-
+        
     elif img.format == "GIF":
         #image = img.convert("RGB")
         # bg = Image.new("RGB", i.size)
+        img.close()
         os.remove(img_path)
+        result_name = None
         # image = Image.composite(i, bg, i)
         # result_name = image_save(img_path,image,convert_type.lower())
-        img.close()
-
+        
     elif img.format == "PNG":
         try:
             image = Image.new("RGB", img.size, (255,255,255))
@@ -73,15 +74,17 @@ def processImage(img_path,convert_type='jpg'):
             image = img.convert('RGB')
             result_name = image_save(img_path,image,convert_type.lower())
         img.close()
-
+        
     elif img.format == "BMP":
         image = img.convert('RGB')
         result_name = image_save(img_path,image,convert_type.lower())
         img.close()
-
+        
     else:
         result_name = img_path
+        img.close()
 
+    
     return result_name
 
 

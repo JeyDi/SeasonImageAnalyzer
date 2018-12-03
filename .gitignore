@@ -108,4 +108,8 @@ venv.bak/
 *.jpg
 *.png
 *.jpeg
+*.JGP
+*.PNG
+*.JPEG
+*.GIF
 
