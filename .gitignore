@@ -114,3 +114,6 @@ venv.bak/
 *.JPEG
 *.GIF
 
+#Custom algorithms
+*.h5
+
