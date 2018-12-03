@@ -107,7 +107,8 @@ def clean_images(main_keywords,main_dir_path,split=0.7):
                 else:
                     #Preprocess image and move
                     element_to_move_processed = processImage(os.path.join(dir_path,f))
-                    shutil.move(element_to_move_processed, test_file)
+                    if element_to_move_processed is not None:
+                        shutil.move(element_to_move_processed, test_file)
 
             print("Folder: ", item, " splitted")
         else:
